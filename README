@@ -1,10 +1,13 @@
 = Batphone
 
-link:batphone.png
+link:../theme/batphone.png
 
-Batphone Asterisk Gateway Interface (AGI) library for Ruby.  Not to be confused
-with RAGI[http://www.snapvine.com/code/ragi/] which is a fine library but is
-not as well suited to short and sweet AGI bat-tasks.
+Batphone is an Asterisk Gateway Interface (AGI) library for Ruby. It is
+well-suited to simple bat-tasks, with a small learning curve. (I promise you'll
+spend more time figuring out AGI than batphone). It is also perfectly capable
+of making all your wildest AGI dreams come true. It won't get in your way.
+
+1. http://www.voip-info.org/wiki-Asterisk+AGI
 
 == Synopsis
 
