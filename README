@@ -24,8 +24,11 @@ batphone.agi:
     agi.answer
     agi.stream_file('batman_help_the_monkeys_are_everywhere', nil)
     begin
-      r = agi.stream_file('tt-monkeys', '#') # press pound to make them stop!
+      # press pound to make them stop!
+      r = agi.stream_file('tt-monkeys', '#')
     end while r.result != ?#
+    agi.stream_file('POW', nil)
+    agi.hangup
 
 == Requirements
 Gee, Batman, all you need is Ruby. You might want Asterisk[http://asterisk.org]
