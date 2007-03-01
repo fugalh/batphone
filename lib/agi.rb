@@ -42,7 +42,9 @@ class AGI
     @log.debug ">> "+msg
     @io_out.puts msg
     @io_out.flush # I'm not sure if this is necessary, but just in case
-    Response.new(@io_in.readline)
+    resp = @io_in.readline
+    @log.debug "<< "+resp
+    Response.new(resp)
   end
 
   # Shortcut for send. e.g. 
