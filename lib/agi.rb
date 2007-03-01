@@ -1,12 +1,8 @@
 require 'logger'
-# Asterisk Gateway Interface
-# 
-# Synopsis:
-#   a = AGI.new
-#   a.answer
-#   r = a.get_data('tt-monkeys')
-#   digits = r.result
 class AGI
+  # Create a new AGI object and parse the Asterisk environment. Usually you
+  # will call this without arguments, but you might have your bat-reasons to
+  # provide +io_in+ and +io_out+.
   def initialize(io_in=STDIN, io_out=STDOUT)
     @io_in = io_in
     @io_out = io_out
@@ -23,7 +19,10 @@ class AGI
 
     @log = Logger.new(STDERR)
   end
-  # Logger object, defaults to Logger.new(STDERR)
+  
+  # Logger object, defaults to <tt>Logger.new(STDERR)</tt>. By default nothing
+  # is logged, but if you turn up the log level to +DEBUG+ you'll see the
+  # behind-the-scenes communication.
   attr_accessor :log
 
   # A Hash with the initial environment. Leave off the agi_ prefix
@@ -35,7 +34,8 @@ class AGI
     @env[key.to_s]
   end
 
-  # Send the given command and arguments. Converts nil and '' in args to literal empty quotes
+  # Send the given command and arguments. Converts +nil+ and "" in
+  # +args+ to literal empty quotes
   def send(cmd, *args)
     args.map! {|a| (a.nil? or a == '') ? '""' : a}
     msg = [cmd, *args].join(' ')
@@ -45,14 +45,16 @@ class AGI
     Response.new(@io_in.readline)
   end
 
-  # Shortcut for send. e.g. a.say_time(Time.now.to_i,nil) is the same as
-  # a.send("SAY TIME",Time.now.to_i,'""')
+  # Shortcut for send. e.g. 
+  #     a.say_time(Time.now.to_i, nil) 
+  # is the same as 
+  #     a.send("SAY TIME",Time.now.to_i,'""')
   def method_missing(symbol, *args)
     cmd = symbol.to_s.upcase.tr('_',' ')
     send(cmd, *args)
   end
 
-  # The answer to every send is one of these.
+  # The answer to every AGI#send is one of these.
   class Response
     # Raw response string
     attr_accessor :raw

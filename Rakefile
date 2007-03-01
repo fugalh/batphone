@@ -1,6 +1,6 @@
 task :rdoc => :doc
 task :doc do |t|
-  sh 'rdoc -t "Ruby AGI" -m README README lib'
+  sh 'rdoc -t "Batphone" -m README README lib'
 end
 
 task :install do |t|
@@ -8,7 +8,7 @@ task :install do |t|
 end
 
 task :dist do 
-  sh 'darcs dist -d ruby-agi-`cat VERSION`'
+  sh 'darcs dist -d batphone-`cat VERSION`'
 end
 
 task :default => :rdoc

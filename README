@@ -1,27 +1,32 @@
-= Ruby AGI
-Copyright (C) 2007 Hans Fugal <mailto:hans@fugal.net>.
-Distributed under the same terms as Ruby.
+= Batphone
+
+link:batphone.png
+
+Batphone Asterisk Gateway Interface (AGI) library for Ruby.  Not to be confused
+with RAGI[http://www.snapvine.com/code/ragi/] which is a fine library but is
+not as well suited to short and sweet AGI bat-tasks.
 
 == Synopsis
 
 In extensions.conf:
 
-    exten => monkeys,1,AGI(monkeys.agi)
+    exten => batphone,1,AGI(batphone.agi)
 
-monkeys.agi:
+batphone.agi:
 
     #!/usr/bin/ruby
     require 'agi'
 
     agi = AGI.new
     agi.answer
-    agi.stream_file('tt-monkeysintro', nil)
+    agi.stream_file('batman_help_the_monkeys_are_everywhere', nil)
     begin
       r = agi.stream_file('tt-monkeys', '#') # press pound to make them stop!
-    end whlie r.result != ?#
+    end while r.result != ?#
 
 == Requirements
-All you need is Ruby. Ruby's all you need. You might want Asterisk too.
+Gee, Batman, all you need is Ruby. You might want Asterisk[http://asterisk.org]
+too.
 
 == Installation
     sudo rake install
@@ -41,3 +46,17 @@ AGI::Response back.
 - I'm inclined to make an OpenStruct-like interface to the Asterisk
   environment, but I need to make sure there won't be any metaprogramming
   conflitcs
+
+== License
+Copyright:: Copyright (C) 2007 Hans Fugal <mailto:hans@fugal.net>.
+License:: Distributed under the same terms as Ruby.
+
+== Colophon
+Holy red phones, Batman! Asterisk is about phones. Rubies are red. Batphones
+are really swell red phones. 
+
+No relation to batsman, though I think he's swell too.
+
+The image is from an
+article[http://www.millionaireplayboy.com/toys/batphone.php] on building your
+own physical batphone at Millionaire Playboy.
