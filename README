@@ -35,6 +35,9 @@ Gee, Batman, all you need is Ruby. You might want Asterisk[http://asterisk.org]
 too.
 
 == Installation
+Get the tarball from http://hans.fugal.net/src/batphone and unpack it somewhere
+batty.
+
     sudo rake install
 or
     sudo ruby setup.rb
