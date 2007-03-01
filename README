@@ -1,0 +1,43 @@
+= Ruby AGI
+Copyright (C) 2007 Hans Fugal <mailto:hans@fugal.net>.
+Distributed under the same terms as Ruby.
+
+== Synopsis
+
+In extensions.conf:
+
+    exten => monkeys,1,AGI(monkeys.agi)
+
+monkeys.agi:
+
+    #!/usr/bin/ruby
+    require 'agi'
+
+    agi = AGI.new
+    agi.answer
+    agi.stream_file('tt-monkeysintro', nil)
+    begin
+      r = agi.stream_file('tt-monkeys', '#') # press pound to make them stop!
+    end whlie r.result != ?#
+
+== Requirements
+All you need is Ruby. Ruby's all you need. You might want Asterisk too.
+
+== Installation
+    sudo rake install
+or
+    sudo ruby setup.rb
+
+== Details
+An AGI object serves as your proxy to Asterisk. Each time you send a command to
+Asterisk using AGI#send or using the metaprogrammed interface, you get an
+AGI::Response back. 
+
+== TODO
+- 5xx errors span multiple lines and should be handled by the lib (probably an
+  exception raised too)
+- It might be nice to have convenience methods that match up with regular
+  Asterisk Applications (commands), e.g. Playback, Background, etc. 
+- I'm inclined to make an OpenStruct-like interface to the Asterisk
+  environment, but I need to make sure there won't be any metaprogramming
+  conflitcs
