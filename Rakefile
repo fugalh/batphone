@@ -19,8 +19,9 @@ Rake::RDocTask.new do |rdoc|
   rdoc.options << '--line-numbers' << '--inline-source'
 end
 
-task :sync => [:dist, :rdoc] do
-  sh 'rsync -av ./ falcon:public_html/src/batphone/'
+task :sync => [:rdoc] do
+  sh 'darcs push falcon:public_html/src/batphone'
+  sh 'rsync -av doc falcon:public_html/src/batphone/'
 end
 
 task :default => :rdoc

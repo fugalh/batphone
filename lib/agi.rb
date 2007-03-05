@@ -1,8 +1,13 @@
 require 'logger'
+
 class AGI
   # Create a new AGI object and parse the Asterisk environment. Usually you
   # will call this without arguments, but you might have your bat-reasons to
   # provide +io_in+ and +io_out+.
+  #
+  # Also sets up a default SIGHUP trap, logging the event and calling exit. If
+  # you want to do some cleanup on SIGHUP instead, override it, e.g.:
+  #     trap('SIGHUP') { cleanup }
   def initialize(io_in=STDIN, io_out=STDOUT)
     @io_in = io_in
     @io_out = io_out
@@ -18,6 +23,10 @@ class AGI
     end
 
     @log = Logger.new(STDERR)
+
+    # default trap for SIGHUP, which is what Asterisk sends us when the other
+    # end hangs up. An uncaught SIGHUP exception pollutes STDERR needlessly.
+    trap('SIGHUP') { @log.debug('Holy SIGHUP, Batman!'); exit }
   end
   
   # Logger object, defaults to <tt>Logger.new(STDERR)</tt>. By default nothing
@@ -25,7 +34,7 @@ class AGI
   # behind-the-scenes communication.
   attr_accessor :log
 
-  # A Hash with the initial environment. Leave off the agi_ prefix
+  # A Hash with the initial environment. Leave off the +agi_+ prefix
   attr_accessor :env
   alias :environment :env
 
