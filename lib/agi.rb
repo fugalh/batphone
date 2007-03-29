@@ -1,4 +1,5 @@
 require 'logger'
+require 'ostruct'
 
 class AGI
   # Create a new AGI object and parse the Asterisk environment. Usually you
@@ -63,6 +64,20 @@ class AGI
   def method_missing(symbol, *args)
     cmd = symbol.to_s.upcase.tr('_',' ')
     send(cmd, *args)
+  end
+
+  # Repeat this menu followed by the timeout, with the given digits expected.
+  # Use break to exit this menu.
+  def menu(audio,digits,timeout=3000, &block)
+    while true # (until the block breaks)
+      r = self.stream_file(audio,digits)
+
+      if r.result == 0 
+	# nothing was dialed yet, let's wait timeout milliseconds longer
+	r = self.wait_for_digit(timeout) 
+      end
+      yield(r) # if the block breaks, we go on with life
+    end
   end
 
   # The answer to every AGI#send is one of these.
