@@ -25,6 +25,8 @@ class AGI
 
     @log = Logger.new(STDERR)
 
+    @args = ARGV
+
     # default trap for SIGHUP, which is what Asterisk sends us when the other
     # end hangs up. An uncaught SIGHUP exception pollutes STDERR needlessly.
     trap('SIGHUP') { @log.debug('Holy SIGHUP, Batman!'); exit }
@@ -38,6 +40,12 @@ class AGI
   # A Hash with the initial environment. Leave off the +agi_+ prefix
   attr_accessor :env
   alias :environment :env
+
+  # The arguments passed in the Asterisk AGI application, so 
+  #     _X,1,AGI(foo.agi|one|two|three)
+  # will give agi.args as ["one","two","three"].
+  attr_reader :args
+  alias :argv :args
 
   # Environment access shortcut. Use strings or symbols as keys.
   def [](key)
