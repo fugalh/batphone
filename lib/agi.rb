@@ -94,7 +94,7 @@ class AGI
     attr_accessor :raw
     # The return code, usually (almost always) 200
     attr_accessor :code
-    # The result value
+    # The result value (a string)
     attr_accessor :result
     # The note in parentheses (if any), stripped of parentheses
     attr_accessor :parenthetical
@@ -111,9 +111,9 @@ class AGI
     # value. In that case you should test against ?d where d is a digit.
     def initialize(raw)
       @raw = raw
-      @raw =~ /^(\d+)\s+result=(-?\d+)(?:\s+\((.*)\))?(?:\s+endpos=(-?\d+))?/
+      @raw =~ /^(\d+)\s+result=(-?[^\s]*)(?:\s+\((.*)\))?(?:\s+endpos=(-?\d+))?/
       @code = ($1 and $1.to_i)
-      @result = ($2 and $2.to_i)
+      @result = $2
       @parenthetical = $3
       @endpos = ($4 and $4.to_i)
     end
