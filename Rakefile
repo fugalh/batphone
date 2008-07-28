@@ -25,3 +25,7 @@ task :sync => [:rdoc] do
 end
 
 task :default => :rdoc
+
+task :gem do
+  sh 'gem build gemspec'
+end
