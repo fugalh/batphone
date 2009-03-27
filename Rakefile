@@ -27,5 +27,5 @@ end
 task :default => :rdoc
 
 task :gem do
-  sh 'gem build gemspec'
+  sh 'gem build batphone.gemspec'
 end
