@@ -4,10 +4,6 @@ task :install do |t|
   sh 'ruby setup.rb'
 end
 
-task :dist do 
-  sh 'darcs dist -d batphone-`cat VERSION`'
-end
-
 require 'rake/rdoctask'
 Rake::RDocTask.new do |rdoc|
   files = ['README', 'lib/**/*.rb']

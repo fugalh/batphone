@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = "batphone"
-  s.version = File.read('VERSION').strip
+  s.version = '0.2.0'
   s.date = "2008-07-14"
   s.authors = ["Hans Fugal"] 
   s.email = "hans@fugal.net"
