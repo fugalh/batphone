@@ -16,7 +16,7 @@ batphone.fastagi:
     class FastAGIServer < FastAGIProtocol
       def agi_post_init
         answer
-        playback('beep').callback do |response|
+        stream_file('beep', nil).callback do |response|
           close_connection
         end
       end
