@@ -7,7 +7,8 @@ class FastAGIProtocol < EventMachine::Protocols::LineAndTextProtocol
   def initialize
     super
     @agi_mode = :environment
-    @defer_queue = []
+    @agi_queue = []
+    @agi_last_defer = nil
   end
 
   def receive_line(line)
@@ -18,27 +19,37 @@ class FastAGIProtocol < EventMachine::Protocols::LineAndTextProtocol
           agi_post_init if respond_to? :agi_post_init
         end
       else # @agi_mode == :commands
-        d = @defer_queue.shift
-        throw 'Received unexpected message: #{line.inspect}' if d.nil?
         @log.debug "<< "+line if not @log.nil?
-        d.succeed Response.new(line)
+        return if @agi_last_defer.nil?
+        @agi_last_defer.succeed Response.new(line)
+        @agi_last_defer = nil
+        flush_queue
       end
     rescue Exception => e
-      @log.error e.inspect if not @log.nil?
+      if not @log.nil?
+        @log.error "#{e.class.name}: #{e.message}"
+        e.backtrace.each { |line| @log.error "\t#{line}" }
+      end
     end
   end
 
   # Send a command, and return a Deferrable for the Response object.
   def send(cmd, *args)
     msg = build_msg(cmd, *args)
-    @log.debug ">> "+msg if not @log.nil?
-    send_data msg+"\n"
-
-    # Queue the defer. The AGI protocol may be synchronous, but that
-    # doesn't stop us from issueing more commands and expecting the
-    # responses in order.
     d = EM::DefaultDeferrable.new
-    @defer_queue << d
+    @agi_queue << [msg, d]
+    flush_queue
     d
   end
+
+  # Try to send the next command from the queue.
+  def flush_queue
+    return if not @agi_last_defer.nil?
+    msg, d = @agi_queue.shift
+    return if msg.nil?
+    @agi_last_defer = d
+    @log.debug ">> "+msg if not @log.nil?
+    send_data msg+"\n"
+  end
+  private :flush_queue
 end
