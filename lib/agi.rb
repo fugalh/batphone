@@ -1,55 +1,34 @@
 require 'logger'
 require 'ostruct'
 
-class AGI
-  # Create a new AGI object and parse the Asterisk environment. Usually you
-  # will call this without arguments, but you might have your bat-reasons to
-  # provide +io_in+ and +io_out+.
-  #
-  # Also sets up a default SIGHUP trap, logging the event and calling exit. If
-  # you want to do some cleanup on SIGHUP instead, override it, e.g.:
-  #     trap('SIGHUP') { cleanup }
-  def initialize(io_in=STDIN, io_out=STDOUT)
-    @io_in = io_in
-    @io_out = io_out
-
-    # read vars
-    @env = {}
-    while (line = @io_in.readline.strip) != ''
-      k,v = line.split(':')
-      k.strip! if k
-      v.strip! if v
-      k = $1 if k =~ /^agi_(.*)$/
-      @env[k] = v
-    end
-
-    @log = Logger.new(STDERR)
-
-    @args = ARGV
-
-    # default trap for SIGHUP, which is what Asterisk sends us when the other
-    # end hangs up. An uncaught SIGHUP exception pollutes STDERR needlessly.
-    trap('SIGHUP') { @log.debug('Holy SIGHUP, Batman!'); exit }
-  end
-
+module AGIMixin
   # Logger object, defaults to <tt>Logger.new(STDERR)</tt>. By default nothing
   # is logged, but if you turn up the log level to +DEBUG+ you'll see the
   # behind-the-scenes communication.
   attr_accessor :log
 
   # A Hash with the initial environment. Leave off the +agi_+ prefix
-  attr_accessor :env
+  def env
+    @env ||= {}
+  end
   alias :environment :env
-
-  # The arguments passed in the Asterisk AGI application, so
-  #     _X,1,AGI(foo.agi|one|two|three)
-  # will give agi.args as ["one","two","three"].
-  attr_reader :args
-  alias :argv :args
 
   # Environment access shortcut. Use strings or symbols as keys.
   def [](key)
-    @env[key.to_s]
+    env[key.to_s]
+  end
+
+  # Read a line from the environment. Returns +false+ on the empty line.
+  def parse_env(line)
+    line.strip!
+    return false if line == ''
+
+    k, v = line.split(':')
+    k.strip! if k
+    v.strip! if v
+    k = $1 if k =~ /^agi_(.*)$/
+    env[k] = v
+    return true
   end
 
   # Send the given command and arguments. Converts +nil+ and "" in
@@ -57,11 +36,11 @@ class AGI
   def send(cmd, *args)
     args.map! {|a| (a.nil? or a == '') ? '""' : a}
     msg = [cmd, *args].join(' ')
-    @log.debug ">> "+msg
+    @log.debug ">> "+msg if not @log.nil?
     @io_out.puts msg
     @io_out.flush # I'm not sure if this is necessary, but just in case
     resp = @io_in.readline
-    @log.debug "<< "+resp
+    @log.debug "<< "+resp if not @log.nil?
     Response.new(resp)
   end
 
@@ -118,4 +97,38 @@ class AGI
       @endpos = ($4 and $4.to_i)
     end
   end
+end
+
+class AGI
+  include AGIMixin
+
+  # Create a new AGI object and parse the Asterisk environment. Usually you
+  # will call this without arguments, but you might have your bat-reasons to
+  # provide +io_in+ and +io_out+.
+  #
+  # Also sets up a default SIGHUP trap, logging the event and calling exit. If
+  # you want to do some cleanup on SIGHUP instead, override it, e.g.:
+  #     trap('SIGHUP') { cleanup }
+  def initialize(io_in=STDIN, io_out=STDOUT)
+    @io_in = io_in
+    @io_out = io_out
+
+    loop do
+      break if not parse_env @io_in.readline
+    end
+
+    @log = Logger.new(STDERR)
+
+    @args = ARGV
+
+    # default trap for SIGHUP, which is what Asterisk sends us when the other
+    # end hangs up. An uncaught SIGHUP exception pollutes STDERR needlessly.
+    trap('SIGHUP') { @log.debug('Holy SIGHUP, Batman!'); exit }
+  end
+
+  # The arguments passed in the Asterisk AGI application, so
+  #     _X,1,AGI(foo.agi|one|two|three)
+  # will give agi.args as ["one","two","three"].
+  attr_reader :args
+  alias :argv :args
 end
