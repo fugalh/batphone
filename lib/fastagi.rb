@@ -32,7 +32,7 @@ class FastAGIProtocol < EventMachine::Protocols::LineAndTextProtocol
   def send(cmd, *args)
     msg = build_msg(cmd, *args)
     @log.debug ">> "+msg if not @log.nil?
-    send_data msg
+    send_data msg+"\n"
 
     # Queue the defer. The AGI protocol may be synchronous, but that
     # doesn't stop us from issueing more commands and expecting the
