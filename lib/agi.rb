@@ -31,7 +31,7 @@ class AGI
     # end hangs up. An uncaught SIGHUP exception pollutes STDERR needlessly.
     trap('SIGHUP') { @log.debug('Holy SIGHUP, Batman!'); exit }
   end
-  
+
   # Logger object, defaults to <tt>Logger.new(STDERR)</tt>. By default nothing
   # is logged, but if you turn up the log level to +DEBUG+ you'll see the
   # behind-the-scenes communication.
@@ -41,7 +41,7 @@ class AGI
   attr_accessor :env
   alias :environment :env
 
-  # The arguments passed in the Asterisk AGI application, so 
+  # The arguments passed in the Asterisk AGI application, so
   #     _X,1,AGI(foo.agi|one|two|three)
   # will give agi.args as ["one","two","three"].
   attr_reader :args
@@ -65,9 +65,9 @@ class AGI
     Response.new(resp)
   end
 
-  # Shortcut for send. e.g. 
-  #     a.say_time(Time.now.to_i, nil) 
-  # is the same as 
+  # Shortcut for send. e.g.
+  #     a.say_time(Time.now.to_i, nil)
+  # is the same as
   #     a.send("SAY TIME",Time.now.to_i,'""')
   def method_missing(symbol, *args)
     cmd = symbol.to_s.upcase.tr('_',' ')
@@ -80,9 +80,9 @@ class AGI
     while true # (until the block breaks)
       r = self.stream_file(audio,digits)
 
-      if r.result == 0 
-	# nothing was dialed yet, let's wait timeout milliseconds longer
-	r = self.wait_for_digit(timeout) 
+      if r.result == 0
+        # nothing was dialed yet, let's wait timeout milliseconds longer
+        r = self.wait_for_digit(timeout)
       end
       yield(r) # if the block breaks, we go on with life
     end
