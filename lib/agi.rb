@@ -31,17 +31,11 @@ module AGIMixin
     return true
   end
 
-  # Send the given command and arguments. Converts +nil+ and "" in
-  # +args+ to literal empty quotes
-  def send(cmd, *args)
+  # Build the raw data for the given command and arguments. Converts +nil+
+  # and "" in +args+ to literal empty quotes
+  def build_msg(cmd, *args)
     args.map! {|a| (a.nil? or a == '') ? '""' : a}
-    msg = [cmd, *args].join(' ')
-    @log.debug ">> "+msg if not @log.nil?
-    @io_out.puts msg
-    @io_out.flush # I'm not sure if this is necessary, but just in case
-    resp = @io_in.readline
-    @log.debug "<< "+resp if not @log.nil?
-    Response.new(resp)
+    [cmd, *args].join(' ')
   end
 
   # Shortcut for send. e.g.
@@ -131,4 +125,16 @@ class AGI
   # will give agi.args as ["one","two","three"].
   attr_reader :args
   alias :argv :args
+
+  # Send a command, wait, and return the Response object.
+  def send(cmd, *args)
+    msg = build_msg(cmd, *args)
+    @log.debug ">> "+msg if not @log.nil?
+    @io_out.puts msg
+    @io_out.flush # I'm not sure if this is necessary, but just in case
+
+    resp = @io_in.readline
+    @log.debug "<< "+resp if not @log.nil?
+    Response.new(resp)
+  end
 end
