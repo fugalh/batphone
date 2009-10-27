@@ -34,7 +34,12 @@ module AGIMixin
   # Build the raw data for the given command and arguments. Converts +nil+
   # and "" in +args+ to literal empty quotes
   def build_msg(cmd, *args)
-    args.map! {|a| (a.nil? or a == '') ? '""' : a}
+    args.map! do |a|
+      a = a.to_s
+      a = (a.empty?) ? '""' : a
+      a = "\"#{a}\"" if a.include? ' '
+      a
+    end
     [cmd, *args].join(' ')
   end
 
