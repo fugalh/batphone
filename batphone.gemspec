@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.homepage = "http://hans.fugal.net/src/batphone/doc/files/README.html"
   s.platform = Gem::Platform::RUBY
   s.description = "Very simple and easy to learn bridge to AGI (Asterisk Gateway Interface)"
-  s.files = ["README", "ChangeLog", "lib/agi.rb", "lib/fastagi.rb"]
+  s.files = ["README", "README.fastagi", "ChangeLog", "lib/agi.rb", "lib/fastagi.rb"]
   s.has_rdoc = true
-  s.extra_rdoc_files = ["README"]
+  s.extra_rdoc_files = ["README", "README.fastagi"]
 end
