@@ -45,13 +45,13 @@ or
 == Details
 An AGI object serves as your proxy to Asterisk. Each time you send a command to
 Asterisk using AGI#send or using the metaprogrammed interface, you get an
-AGI::Response back. 
+AGI::Response back.
 
 == TODO
 - 5xx errors span multiple lines and should be handled by the lib (probably an
   exception raised too)
 - It might be nice to have convenience methods that match up with regular
-  Asterisk Applications (commands), e.g. Playback, Background, etc. 
+  Asterisk Applications (commands), e.g. Playback, Background, etc.
 - I'm inclined to make an OpenStruct-like interface to the Asterisk
   environment, but I need to make sure there won't be any metaprogramming
   conflitcs
@@ -62,7 +62,7 @@ License:: Distributed under the same terms as Ruby.
 
 == Colophon
 Holy red phones, Batman! Asterisk is about phones. Rubies are red. Batphones
-are really swell red phones. 
+are really swell red phones.
 
 No relation to batsman[http://eigenclass.org/], though I think he's swell too.
 
