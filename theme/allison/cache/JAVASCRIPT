@@ -1,9 +1,8 @@
 
-// Javascript for Allison RDoc template
-// Copyright 2006 Cloudburst LLC
-// Some sections originally from public domain material
+// Allison template
+// Copyright 2007, 2008 Cloudburst, LLC. Licensed under the AFL 3. See the included LICENSE file.
 
-var href_base = '%style_url%'.replace(/(.*\/).*/, '$1'); // haha! inline js is good for something  
+var href_base = '%style_url%'.replace(/(.*\/).*/, '$1'); // inline js is good for something  
 
 function $(id) {
     if (document.getElementById)
@@ -66,7 +65,7 @@ function highlightSymbols() {
 
  function stripe() {
     var even = true;
-    var color = "#f4eefd";
+    var color = "#e4ebed";
     var tables = document.getElementsByTagName('table');
     if (tables.length == 0) { return; }
     for (var h = 0; h < tables.length; h++) {
@@ -164,8 +163,9 @@ function insertIndices() {
 }
 
 function abbreviateIndices() {
-  abbreviateIndicesInner(["defined_in", "child_of", "includes"], 20, 'a');
-  abbreviateIndicesInner(["defined_in", "requires", "child_of", "includes"], 20, 'span');
+  var ids = ["defined_in", "child_of", "includes", "requires", "method", "methods"];
+  abbreviateIndicesInner(ids, 25, 'a');
+  abbreviateIndicesInner(ids, 25, 'span');
 }
 
 function abbreviateIndicesInner(indices, amount, tag) {
@@ -177,7 +177,9 @@ function abbreviateIndicesInner(indices, amount, tag) {
         var link = links[y];
         if (link.getElementsByTagName('span').length == 0 && link.getElementsByTagName('a').length == 0) {
           // avoid nesting
-          link.innerHTML = abbreviate(link.innerHTML, amount);
+          link.innerHTML = link.innerHTML.replace(/<br>|\n/gi, '');
+          link.title = link.innerHTML;
+          link.innerHTML = abbreviate(link.innerHTML, amount) + '<br>';
         }
       }
     }
@@ -185,6 +187,7 @@ function abbreviateIndicesInner(indices, amount, tag) {
 }
 
 function linkTitle() {
+  
   /* grab the correct title element from the index */
   var index_page = ajaxGet('index.html');
   title_text = index_page.match(/<title>(.*)<\/title>/m)[1];
@@ -195,6 +198,7 @@ function linkTitle() {
   } else {
     p.innerHTML = title_text + ": " + p.innerHTML;
   }
+  
   /* set the link properly */
   title_link = index_page.match(/<a\s+href="(.*?)"/)[1];
   var element = $('title');
@@ -206,11 +210,12 @@ function linkTitle() {
   } else {
     item_name = element.innerHTML;
   }
-  element.innerHTML = '<a href="' + href_base + title_link + '">' + item_type + " " + abbreviate(item_name, 25) + '</a>';
-  /* breadcrumb navigation for the win */
+  element.innerHTML = '<a href="' + href_base + title_link + '">' + item_type + " " + abbreviate(item_name, 45) + '</a>';
+  element.getElementsByTagName('a')[0].title = item_name
+  
+  /* breadcrumb navigation */
   items = item_name.split("::");
   items_new = item_name.split("::");
-  var s = ""
   file_links = $('class').getElementsByTagName('a');
   for (var x = 0; x < items.length - 1; x++ ){
     var item = items[x];
@@ -249,7 +254,7 @@ function disableSubmit(event) {
   
 function filterList(id, s, event) {
   
-  /* some half-assed escaping */
+  /* some weak escaping */
   s = s.replace(/[^\w\d\.\_\-\/\:\=\[\]\?\!]/g, '');
   s = RegExp.escape(s);
   
@@ -278,10 +283,7 @@ function filterList(id, s, event) {
 
 RegExp.escape = function(text) {
   if (!arguments.callee.sRE) {
-    var specials = [
-      '/', '.', '*', '+', '?', '|',
-      '(', ')', '[', ']', '{', '}', '\\\\'
-    ];
+    var specials = ['/', '.', '*', '+', '?', '|', '(', ')', '[', ']', '{', '}', '\\\\'];
     arguments.callee.sRE = new RegExp(
       '(\\\\' + specials.join('|\\\\') + ')', 'g'
     );
@@ -289,13 +291,20 @@ RegExp.escape = function(text) {
   return text.replace(arguments.callee.sRE, '\\\\$1');
 }
 
-
 function hacks() {
   // show the spacer if necessary, 
   divs = document.getElementsByTagName('div');
-  for (x in divs) {
+  for(var x = 0; x < divs.length; x++) {
     if (divs[x].className && divs[x].className.match(/top/)) {
       document.getElementById('spacer').style.display = 'block';
+    }
+  }
+  // remove extra colons from tables
+  tds = document.getElementsByTagName('td');
+  for(var x = 0; x < tds.length; x++) {
+    str = tds[x].innerHTML
+    if (str.charAt(str.length - 1) == ":") {
+      tds[x].innerHTML = str.slice(0, str.length - 1)
     }
   }
 }

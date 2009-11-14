@@ -10,7 +10,7 @@ Rake::RDocTask.new do |rdoc|
   rdoc.rdoc_files.add(files)
   rdoc.main = "README" # page to start on
   rdoc.title = "Batphone"
-  rdoc.template = "theme/allison/allison.rb"
+  rdoc.template = "theme/allison/lib/allison.rb"
   rdoc.rdoc_dir = 'doc' # rdoc output folder
   rdoc.options << '--line-numbers' << '--inline-source'
 end
