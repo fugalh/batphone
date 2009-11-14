@@ -30,9 +30,11 @@ batphone.agi:
     agi.stream_file('POW', nil)
     agi.hangup
 
+Or you can use FastAGI[link:files/README_fastagi.html].
+
 == Requirements
-Gee, Batman, all you need is Ruby. You might want Asterisk[http://asterisk.org]
-too.
+Gee, Batman, for AGI all you need is Ruby. You might want Asterisk[http://asterisk.org]
+too. For FastAGI you also need EventMachine[http://rubyeventmachine.com/].
 
 == Installation
 Get it from GitHub[http://github.com/fugalh/batphone] and put it somewhere

@@ -6,7 +6,7 @@ end
 
 require 'rake/rdoctask'
 Rake::RDocTask.new do |rdoc|
-  files = ['README', 'lib/**/*.rb']
+  files = ['README', 'README.fastagi', 'lib/**/*.rb']
   rdoc.rdoc_files.add(files)
   rdoc.main = "README" # page to start on
   rdoc.title = "Batphone"
